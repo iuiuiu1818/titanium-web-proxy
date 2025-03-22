@@ -341,7 +341,7 @@ internal class TcpConnectionFactory : IDisposable
                 port = externalProxy.Port;
             }
 
-            var ipAddresses = await Dns.GetHostAddressesAsync(hostname);
+            var ipAddresses = await DnsProxy.GetHostAddressesAsync(hostname);
             if (ipAddresses == null || ipAddresses.Length == 0)
             {
                 if (prefetch) return null;
@@ -405,7 +405,7 @@ internal class TcpConnectionFactory : IDisposable
                         else
                         {
                             // todo: resolve only once when the SOCKS proxy has multiple addresses (and the first address fails)
-                            var remoteIpAddresses = await Dns.GetHostAddressesAsync(remoteHostName);
+                            var remoteIpAddresses = await GuiDns.GetHostAddressesAsync(remoteHostName);
                             if (remoteIpAddresses == null || remoteIpAddresses.Length == 0)
                                 throw new Exception($"Could not resolve the SOCKS remote hostname {remoteHostName}");
 
@@ -575,6 +575,9 @@ internal class TcpConnectionFactory : IDisposable
 
             retry = false;
             goto retry;
+        }
+        catch (SocketException SEx) {
+            Console.WriteLine(SEx);
         }
         catch (Exception)
         {

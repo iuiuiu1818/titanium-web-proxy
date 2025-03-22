@@ -107,7 +107,9 @@ public partial class ProxyServer
 
                 await clientStream.WriteResponseAsync(response, cancellationToken);
 
-                var clientHelloInfo = await SslTools.PeekClientHello(clientStream, BufferPool, cancellationToken);
+                ClientHelloInfo? clientHelloInfo = null;
+                if (decryptSsl)
+                    clientHelloInfo = await SslTools.PeekClientHello(clientStream, BufferPool, cancellationToken);
                 if (clientStream.IsClosed) return;
 
                 var isClientHello = clientHelloInfo != null;

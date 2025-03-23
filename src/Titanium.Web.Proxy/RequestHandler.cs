@@ -141,7 +141,7 @@ public partial class ProxyServer
                             prefetchTask = null;
                         }
 
-                        if (connection != null)
+                        if (connection != null && connection.TcpSocket != null)
                         {
                             var socket = connection.TcpSocket;
                             var part1 = socket.Poll(1000, SelectMode.SelectRead);
@@ -381,22 +381,22 @@ public partial class ProxyServer
     }
 
 #if DEBUG
-        internal bool ShouldCallBeforeRequestBodyWrite()
+    internal bool ShouldCallBeforeRequestBodyWrite()
+    {
+        if (OnRequestBodyWrite != null)
         {
-            if (OnRequestBodyWrite != null)
-            {
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
-        internal async Task OnBeforeRequestBodyWrite(BeforeBodyWriteEventArgs args)
+        return false;
+    }
+
+    internal async Task OnBeforeRequestBodyWrite(BeforeBodyWriteEventArgs args)
+    {
+        if (OnRequestBodyWrite != null)
         {
-            if (OnRequestBodyWrite != null)
-            {
-                await OnRequestBodyWrite.InvokeAsync(this, args, ExceptionFunc);
-            }
+            await OnRequestBodyWrite.InvokeAsync(this, args, ExceptionFunc);
         }
+    }
 #endif
 }

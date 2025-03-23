@@ -405,7 +405,7 @@ internal class TcpConnectionFactory : IDisposable
                         else
                         {
                             // todo: resolve only once when the SOCKS proxy has multiple addresses (and the first address fails)
-                            var remoteIpAddresses = await GuiDns.GetHostAddressesAsync(remoteHostName);
+                            var remoteIpAddresses = await DnsProxy.GetHostAddressesAsync(remoteHostName);
                             if (remoteIpAddresses == null || remoteIpAddresses.Length == 0)
                                 throw new Exception($"Could not resolve the SOCKS remote hostname {remoteHostName}");
 
